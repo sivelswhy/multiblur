@@ -146,6 +146,7 @@ The app is ad hoc signed. To run it on another Mac, right-click it and choose **
 Open **https://sivelswhy.github.io/multiblur/**. On the first visit, three loading bars show the detection engine (27 MB) and the plate (38 MB) and face (7 MB) models downloading. They are then kept in the browser's cache, so later visits start instantly. Then drop photos or videos: each file is processed in turn, with a live preview and a progress bar, and gets a **Download** button (`_anonymized` suffix). Nothing is uploaded: detection, masking and video encoding all run on your device.
 
 - Same detectors, tracker, cut detection and masks as the macOS app (Blur, Mosaic, Box, Image; ellipse or box for faces), with the same defaults. Settings are remembered in the browser.
+- English or French: follows the browser, or the EN / FR switch in the toolbar. Works on phones too: on iPhone and Android, **Save…** opens the share sheet to keep results in Photos.
 - Models run on the GPU through WebGPU (recent Chrome, Edge and Safari), otherwise on the CPU through WebAssembly, which is much slower for videos.
 - Videos are decoded and encoded with WebCodecs and saved as MP4 (H.264), with the sound kept when the browser can encode it. Photos keep their format (JPEG, PNG, WebP) and lose their EXIF/GPS metadata.
 - Not in the web app yet: the editor, voice disguise, folders, and keeping metadata.

@@ -10,6 +10,7 @@ import {
   type VideoSample,
 } from "mediabunny";
 import { type DetectOptions, Detector, FACE_MAX_SIDE } from "./detector";
+import { t } from "./i18n";
 import { type MaskOptions, Masker } from "./mask";
 import type { Options } from "./options";
 import { CutDetector, Tracker } from "./tracker";
@@ -20,7 +21,7 @@ export interface Result {
   plates: number;
   faces: number;
   /** Something the user should know about the output, e.g. the sound had to be removed. */
-  warning?: string;
+  warning?: "warning.audioDropped";
 }
 
 export interface Callbacks {
@@ -103,7 +104,7 @@ export async function processVideo(
 ): Promise<Result> {
   const input = new Input({ source: new BlobSource(file), formats: ALL_FORMATS });
   const track = await input.getPrimaryVideoTrack();
-  if (!track) throw new Error("No video track found.");
+  if (!track) throw new Error(t("error.noVideoTrack"));
   const frameRate = (await track.computePacketStats(100)).averagePacketRate || 30;
 
   const tracker = new Tracker(Math.max(3, Math.round(frameRate * TRACK_MEMORY)));
@@ -153,7 +154,7 @@ export async function processVideo(
   });
   if (!conversion.isValid) {
     const reasons = conversion.discardedTracks.map((t) => `${t.track.type}: ${t.reason}`).join(", ");
-    throw new Error(`This browser can't convert this video (${reasons}).`);
+    throw new Error(t("error.cantConvert", { reasons }));
   }
   const droppedAudio = options.keepAudio && conversion.discardedTracks.some((t) => t.track.type === "audio");
   conversion.onProgress = (fraction) => callbacks.progress(fraction);
@@ -166,6 +167,6 @@ export async function processVideo(
     name: outputName(file, "mp4"),
     plates: plateIDs.size,
     faces: faceIDs.size,
-    warning: droppedAudio ? "This browser can't encode the sound of this video: it was removed." : undefined,
+    warning: droppedAudio ? "warning.audioDropped" : undefined,
   };
 }
