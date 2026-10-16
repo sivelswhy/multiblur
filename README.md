@@ -5,10 +5,11 @@ Detects license plates (any country) and faces in images, videos and folders, an
 - **Plates**: YOLOv11 fine-tuned on license plates from many countries.
 - **Faces**: CenterFace from [deface](https://github.com/ORB-HD/deface).
 
-Two front-ends share the same detectors:
+Three front-ends share the same detectors:
 
 - `multiblur.py`: a cross-platform Python CLI.
 - `macos/`: **MultiBlur**, a native macOS app (SwiftUI + CoreML + Vision + AVFoundation) with no Python dependency.
+- `web/`: the **web app**, at **https://sivelswhy.github.io/multiblur/**. It runs entirely in the browser (ONNX Runtime Web + WebCodecs): photos and videos never leave your device.
 
 ## Download
 
@@ -140,6 +141,26 @@ The CoreML models are versioned in `models/*.mlpackage` (40 MB): the copies conv
 
 The app is ad hoc signed. To run it on another Mac, right-click it and choose **Open** the first time, or sign it with a Developer ID certificate.
 
+## Web app
+
+Open **https://sivelswhy.github.io/multiblur/**. On the first visit, three loading bars show the detection engine (27 MB) and the plate (38 MB) and face (7 MB) models downloading. They are then kept in the browser's cache, so later visits start instantly. Then drop photos or videos: each file is processed in turn, with a live preview and a progress bar, and gets a **Download** button (`_anonymized` suffix). Nothing is uploaded: detection, masking and video encoding all run on your device.
+
+- Same detectors, tracker, cut detection and masks as the macOS app (Blur, Mosaic, Box, Image; ellipse or box for faces), with the same defaults. Settings are remembered in the browser.
+- Models run on the GPU through WebGPU (recent Chrome, Edge and Safari), otherwise on the CPU through WebAssembly, which is much slower for videos.
+- Videos are decoded and encoded with WebCodecs and saved as MP4 (H.264), with the sound kept when the browser can encode it. Photos keep their format (JPEG, PNG, WebP) and lose their EXIF/GPS metadata.
+- Not in the web app yet: the editor, voice disguise, folders, and keeping metadata.
+
+### Build
+
+```bash
+.venv/bin/python scripts/export_onnx.py   # only when the models change: writes web/public/models/*.onnx
+cd web && npm install
+npm run dev                                 # http://localhost:5173
+npm run build                               # → web/dist
+```
+
+The ONNX models are versioned in `web/public/models` (45 MB). Every push to `main` that touches `web/` rebuilds the site and publishes it on GitHub Pages ([`.github/workflows/pages.yml`](.github/workflows/pages.yml)).
+
 ## Models & licenses
 
 - [morsetechlab/yolov11-license-plate-detection](https://huggingface.co/morsetechlab/yolov11-license-plate-detection): YOLOv11 trained on license plates from many countries. The model and Ultralytics are licensed under **AGPL-3.0**, which matters for commercial or distributed use.
@@ -156,5 +177,5 @@ Copyright (C) 2026 sivelswhy
 
 MultiBlur is free software under the **GNU Affero General Public License v3.0** ([LICENSE](LICENSE)): you may use, study, share and modify it, provided that distributed or network-served versions keep the same license and make their source code available. The AGPL is required by the YOLO license plate model and Ultralytics, which use it.
 
-Third-party models and code (CenterFace, deface, SFace) keep their own MIT and Apache 2.0 licenses: see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Third-party models and code (CenterFace, deface, SFace, ONNX Runtime Web, Mediabunny) keep their own MIT, Apache 2.0 and MPL 2.0 licenses: see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 

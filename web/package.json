@@ -1,0 +1,21 @@
+{
+  "name": "multiblur-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "MultiBlur in the browser: masks license plates and faces locally",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "mediabunny": "^1.61.6",
+    "onnxruntime-web": "^1.30.0"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  }
+}

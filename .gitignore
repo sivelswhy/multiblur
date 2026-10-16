@@ -7,3 +7,6 @@ macos/build/
 anonymized/
 *_anonymized.*
 .DS_Store
+web/node_modules/
+web/dist/
+web/public/ort/

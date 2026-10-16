@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MultiBlur</title>
+    <meta name="description" content="Blur license plates and faces in photos and videos, entirely in your browser. Nothing is uploaded." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233b5bdb'/%3E%3Crect x='6' y='12' width='20' height='8' rx='2' fill='white' opacity='.55'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <div>
+          <h1>MultiBlur</h1>
+          <p class="tagline">Masks license plates and faces in photos and videos, on your device. Nothing is uploaded.</p>
+        </div>
+      </div>
+      <a class="source" href="https://github.com/sivelswhy/multiblur" rel="noopener">Source &amp; macOS app</a>
+    </header>
+
+    <section class="models" aria-labelledby="models-title">
+      <div class="models-head">
+        <h2 id="models-title">Models</h2>
+        <span id="backend" class="badge" hidden></span>
+      </div>
+      <ul id="model-list" class="model-list"></ul>
+      <p id="model-error" class="error" hidden></p>
+    </section>
+
+    <main class="workspace">
+      <aside class="settings" aria-label="Settings">
+        <fieldset>
+          <legend>Mask</legend>
+          <label class="check"><input type="checkbox" name="maskPlates" /> License plates</label>
+          <label class="check"><input type="checkbox" name="maskFaces" /> Faces</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Style</legend>
+          <div class="segmented" role="radiogroup" aria-label="Style">
+            <label><input type="radio" name="mode" value="blur" /><span>Blur</span></label>
+            <label><input type="radio" name="mode" value="mosaic" /><span>Mosaic</span></label>
+            <label><input type="radio" name="mode" value="solid" /><span>Box</span></label>
+            <label><input type="radio" name="mode" value="image" /><span>Image</span></label>
+          </div>
+          <label class="field" data-show="mosaic">
+            <span>Block size <output data-for="mosaicSize"></output></span>
+            <input type="range" name="mosaicSize" min="4" max="60" step="1" />
+          </label>
+          <div class="field" data-show="image">
+            <span>Replacement image</span>
+            <label class="file-button">
+              <input type="file" id="replacement" accept="image/*" />
+              <span id="replacement-name">Choose an image…</span>
+            </label>
+            <small>Transparent areas show a blur, never the original.</small>
+          </div>
+          <label class="field">
+            <span>Face shape</span>
+            <select name="faceShape">
+              <option value="ellipse">Ellipse</option>
+              <option value="box">Box</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <details>
+          <summary>Detection</summary>
+          <label class="field">
+            <span>Plate confidence <output data-for="plateConfidence"></output></span>
+            <input type="range" name="plateConfidence" min="0.05" max="0.9" step="0.05" />
+            <small>Lower finds more plates, but also flags ordinary text such as signs.</small>
+          </label>
+          <label class="field">
+            <span>Face confidence <output data-for="faceThreshold"></output></span>
+            <input type="range" name="faceThreshold" min="0.05" max="0.9" step="0.05" />
+          </label>
+          <label class="field">
+            <span>Plate margin <output data-for="plateMaskScale"></output></span>
+            <input type="range" name="plateMaskScale" min="1" max="1.6" step="0.05" />
+          </label>
+          <label class="field">
+            <span>Face margin <output data-for="faceMaskScale"></output></span>
+            <input type="range" name="faceMaskScale" min="1" max="1.8" step="0.05" />
+          </label>
+          <label class="field">
+            <span>Face resolution</span>
+            <select name="faceResolution">
+              <option value="0">Full resolution</option>
+              <option value="1920">1920 px</option>
+              <option value="1280">1280 px</option>
+              <option value="640">640 px (fastest)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Small, distant objects</span>
+            <select name="smallObjects">
+              <option value="off">Don't search</option>
+              <option value="photos">Search in photos</option>
+              <option value="all">Search in photos &amp; videos (slow)</option>
+            </select>
+          </label>
+          <label class="check"><input type="checkbox" name="drawScores" /> Show detection scores</label>
+        </details>
+
+        <details>
+          <summary>Output</summary>
+          <label class="check"><input type="checkbox" name="keepAudio" /> Keep the sound of videos</label>
+          <p class="note">Photos are saved without their EXIF and GPS metadata. Videos are saved as MP4.</p>
+        </details>
+
+        <button type="button" id="reset" class="link">Restore defaults</button>
+      </aside>
+
+      <section class="files" aria-label="Files">
+        <label id="drop" class="drop">
+          <input type="file" id="picker" accept="image/*,video/*,.mov,.mkv" multiple />
+          <span class="drop-title">Drop photos or videos here</span>
+          <span class="drop-sub">or click to choose files</span>
+        </label>
+
+        <div id="queue-bar" class="queue-bar" hidden>
+          <span id="queue-summary"></span>
+          <div class="queue-actions">
+            <button type="button" id="download-all" class="secondary" hidden>Download all</button>
+            <button type="button" id="clear" class="link">Clear finished</button>
+          </div>
+        </div>
+        <ul id="queue" class="queue"></ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Plates: YOLOv11 by morsetechlab · Faces: CenterFace via deface · Runs on ONNX Runtime Web</span>
+      <span>AGPL-3.0 · <span id="commit"></span></span>
+    </footer>
+
+    <dialog id="viewer" class="viewer">
+      <form method="dialog"><button class="close" aria-label="Close">×</button></form>
+      <div id="viewer-body"></div>
+    </dialog>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
