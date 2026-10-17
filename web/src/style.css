@@ -874,6 +874,7 @@ details.disclosure[open] > .group {
 .segmented label {
   position: relative;
   min-width: 0;
+  cursor: pointer;
 }
 
 .segmented input {
