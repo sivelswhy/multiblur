@@ -1,6 +1,6 @@
 name: Test, Build & Release
 
-# Every push to main runs the Python tests, then builds a universal MultiBlur.app and an Android APK, and
+# Every push to main runs the Python tests, then builds a universal MultiBlur.app, an Android APK and an iPhone IPA, and
 # publishes them as a GitHub release.
 # The CoreML models are versioned in models/*.mlpackage and embedded in the app, which then
 # works fully offline.
@@ -83,3 +83,21 @@ jobs:
         run: |
           cp android/app/build/outputs/apk/release/app-release.apk MultiBlur.apk
           gh release upload "build-${{ github.run_number }}" MultiBlur.apk
+
+  ios:
+    name: iPhone IPA
+    needs: build
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build MultiBlur.ipa (unsigned)
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+        run: ios/build.sh
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "build-${{ github.run_number }}" ios/build/MultiBlur.ipa

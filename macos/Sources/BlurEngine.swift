@@ -1,5 +1,7 @@
 @preconcurrency import AVFoundation
+#if canImport(AppKit)
 import AppKit
+#endif
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import CoreML
@@ -132,12 +134,18 @@ final class BlurEngine: @unchecked Sendable {
         guard let path = options.replacementImagePath else { throw EngineError.replacementImageMissing }
         let url = URL(fileURLWithPath: path)
         if let image = CIImage(contentsOf: url, options: [.applyOrientationProperty: true]) { return image }
+        #if canImport(AppKit)
         // Core Image can't read vector formats such as SVG: rasterize them through NSImage instead.
         guard let image = NSImage(contentsOf: url), let raster = Self.rasterize(image) else {
             throw EngineError.replacementImageUnreadable(url.lastPathComponent)
         }
         return CIImage(cgImage: raster)
+        #else
+        throw EngineError.replacementImageUnreadable(url.lastPathComponent)
+        #endif
     }
+
+    #if canImport(AppKit)
 
     /// Renders an NSImage (e.g. an SVG) with transparency, 1024 px on its longest side so it stays sharp when stretched.
     private static func rasterize(_ image: NSImage) -> CGImage? {
@@ -153,6 +161,7 @@ final class BlurEngine: @unchecked Sendable {
         NSGraphicsContext.restoreGraphicsState()
         return context.makeImage()
     }
+    #endif
 
     // MARK: - Detection
 

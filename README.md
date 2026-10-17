@@ -5,10 +5,11 @@ Detects license plates (any country) and faces in images, videos and folders, an
 - **Plates**: YOLOv11 fine-tuned on license plates from many countries.
 - **Faces**: CenterFace from [deface](https://github.com/ORB-HD/deface).
 
-Four front-ends share the same detectors:
+Five front-ends share the same detectors:
 
 - `multiblur.py`: a cross-platform Python CLI.
 - `macos/`: **MultiBlur**, a native macOS app (SwiftUI + CoreML + Vision + AVFoundation) with no Python dependency.
+- `ios/`: **MultiBlur for iPhone and iPad**, a native app (SwiftUI) running the macOS app's engine (CoreML on the Neural Engine, Vision, AVFoundation).
 - `android/`: **MultiBlur for Android**, a native app (Kotlin + Jetpack Compose + ONNX Runtime + MediaCodec).
 - `web/`: the **web app**, at **https://sivelswhy.github.io/multiblur/**. It runs entirely in the browser (ONNX Runtime Web + WebCodecs): photos and videos never leave your device.
 
@@ -16,7 +17,8 @@ Four front-ends share the same detectors:
 
 - [Download](#download)
 - [macOS app](#macos-app-multiblur) · [Build](#build)
-- [Android app](#android-app) · [Build](#build-2)
+- [iPhone app](#iphone-app) · [Build](#build-2)
+- [Android app](#android-app) · [Build](#build-3)
 - [Web app](#web-app) · [Build](#build-1)
 - [Python CLI](#python-cli) · [Setup](#setup) · [Usage](#usage) · [Tests](#tests)
 - [Models & licenses](#models--licenses)
@@ -28,6 +30,7 @@ Four front-ends share the same detectors:
 | Platform | Get it |
 |---|---|
 | macOS 14+ | **MultiBlur-macOS.zip** from the [latest release](https://github.com/sivelswhy/multiblur/releases/latest) |
+| iOS 17+ | **MultiBlur.ipa** from the [latest release](https://github.com/sivelswhy/multiblur/releases/latest), installed with a sideloading tool ([install notes](#iphone-app)) |
 | Android 10+ | **MultiBlur.apk** from the [latest release](https://github.com/sivelswhy/multiblur/releases/latest) ([install notes](#android-app)) |
 | Any browser | **https://sivelswhy.github.io/multiblur/**, nothing to install ([details](#web-app)) |
 | Python | `multiblur.py` from this repository ([setup](#python-cli)) |
@@ -36,7 +39,7 @@ Four front-ends share the same detectors:
 
 The detection models are included in the app, which never touches the network on its own. **Settings › Advanced › Check for Updates** compares the commit the app was built from with the latest commit on `main`; when they differ, **Update and Relaunch** downloads that commit's release, checks it's a validly signed MultiBlur, replaces the app and relaunches it.
 
-Every push to `main` runs the Python tests, then builds a universal app and the Android APK and publishes them as a new release ([`.github/workflows/release.yml`](.github/workflows/release.yml)).
+Every push to `main` runs the Python tests, then builds a universal app, the iPhone IPA and the Android APK and publishes them as a new release ([`.github/workflows/release.yml`](.github/workflows/release.yml)).
 
 ## Python CLI
 
@@ -180,6 +183,26 @@ npm run build                               # → web/dist
 ```
 
 The ONNX models are versioned in `web/public/models` (45 MB). Every push to `main` that touches `web/` rebuilds the site and publishes it on GitHub Pages ([`.github/workflows/pages.yml`](.github/workflows/pages.yml)).
+
+## iPhone app
+
+A native SwiftUI app for iPhone and iPad that runs the same engine as the macOS app, compiled from the same Swift files: CoreML models on the Neural Engine, Vision, Core Image and AVFoundation. It's fast (the Neural Engine does the work), and voice disguise comes along.
+
+- **Add Photos or Videos** opens the photo picker (or **Import from Files**; you can also open photos and videos in MultiBlur from other apps). Each file is processed in turn with a live preview and the time left, then saved to your photo library (add-only access: the app can't read your photos), with **Share** and **Open** buttons.
+- Settings (top right): what to mask, style (Blur, Mosaic, Black box, Image, None), face mask shape, voices (Lower, Higher, Robot, Whisper, Synthetic voice), detection thresholds and scales, detection resolution, small objects, scores, video codec, metadata, and where models run.
+- English or French: the app follows the iPhone's language; **Change Language…** opens Settings › Apps › MultiBlur › Language.
+- Requires iOS 17 or later. The editor isn't included yet.
+
+**Install**: the IPA isn't signed by Apple (the app isn't on the App Store), so install it with a sideloading tool that signs it with your own Apple ID, such as [Sideloadly](https://sideloadly.io) or [AltStore](https://altstore.io): download `MultiBlur.ipa` from the [latest release](https://github.com/sivelswhy/multiblur/releases/latest), connect the iPhone to your computer and drag the IPA into the tool. With a free Apple ID, the app has to be re-signed every 7 days. Then enable **Settings › Privacy & Security › Developer Mode** if iOS asks for it.
+
+### Build
+
+```bash
+ios/build.sh                 # → ios/build/MultiBlur.ipa (unsigned)
+SIMULATOR=1 ios/build.sh     # → ios/build/MultiBlur-sim.app for the iOS Simulator
+```
+
+Needs Xcode (for the iOS SDK; the build uses `swiftc` directly, no Xcode project) and the CoreML models in `models/*.mlpackage`. The engine files are shared with `macos/Sources`; the iPhone interface is in `ios/Sources`. The icon is drawn by `swift macos/tools/make_icon.swift --ios ios/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png`.
 
 ## Android app
 

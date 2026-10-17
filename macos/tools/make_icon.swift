@@ -1,5 +1,6 @@
 // Draws the MultiBlur app icon and writes Resources/AppIcon.icns.
 // Usage: swift tools/make_icon.swift <output.icns> [preview.png]
+//        swift tools/make_icon.swift --ios <output.png>   (full-bleed 1024 px square: iOS rounds the corners)
 import AppKit
 import CoreGraphics
 
@@ -10,10 +11,11 @@ func color(_ hex: UInt32, _ alpha: CGFloat = 1) -> CGColor {
             blue: CGFloat(hex & 0xFF) / 255, alpha: alpha)
 }
 
-func drawIcon(in ctx: CGContext) {
-    // macOS icon grid: 824 pt rounded square centered on a 1024 canvas.
-    let tile = CGRect(x: 100, y: 100, width: 824, height: 824)
-    let tilePath = CGPath(roundedRect: tile, cornerWidth: 185, cornerHeight: 185, transform: nil)
+func drawIcon(in ctx: CGContext, fullBleed: Bool = false) {
+    // macOS icon grid: 824 pt rounded square centered on a 1024 canvas; iOS fills the canvas.
+    let tile = fullBleed ? CGRect(x: 0, y: 0, width: 1024, height: 1024) : CGRect(x: 100, y: 100, width: 824, height: 824)
+    let tilePath = fullBleed ? CGPath(rect: tile, transform: nil)
+        : CGPath(roundedRect: tile, cornerWidth: 185, cornerHeight: 185, transform: nil)
 
     ctx.saveGState()
     ctx.setShadow(offset: CGSize(width: 0, height: -12), blur: 28, color: color(0x000000, 0.35))
@@ -27,7 +29,7 @@ func drawIcon(in ctx: CGContext) {
     ctx.clip()
     let background = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
                                 colors: [color(0x5B9BFF), color(0x4A3FE0)] as CFArray, locations: [0, 1])!
-    ctx.drawLinearGradient(background, start: CGPoint(x: 512, y: 924), end: CGPoint(x: 512, y: 100), options: [])
+    ctx.drawLinearGradient(background, start: CGPoint(x: 512, y: tile.maxY), end: CGPoint(x: 512, y: tile.minY), options: [])
     // Soft highlight on the upper half.
     let glow = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
                           colors: [color(0xFFFFFF, 0.18), color(0xFFFFFF, 0)] as CFArray, locations: [0, 1])!
@@ -84,13 +86,13 @@ func drawIcon(in ctx: CGContext) {
     ctx.strokePath()
 }
 
-func render(_ size: Int) -> CGImage {
+func render(_ size: Int, fullBleed: Bool = false) -> CGImage {
     let ctx = CGContext(data: nil, width: size, height: size, bitsPerComponent: 8, bytesPerRow: 0,
                         space: CGColorSpace(name: CGColorSpace.sRGB)!,
                         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
     ctx.interpolationQuality = .high
     ctx.scaleBy(x: CGFloat(size) / canvas, y: CGFloat(size) / canvas)
-    drawIcon(in: ctx)
+    drawIcon(in: ctx, fullBleed: fullBleed)
     return ctx.makeImage()!
 }
 
@@ -100,6 +102,11 @@ func writePNG(_ image: CGImage, to url: URL) {
 }
 
 let args = CommandLine.arguments
+if args.count == 3, args[1] == "--ios" {
+    writePNG(render(1024, fullBleed: true), to: URL(fileURLWithPath: args[2]))
+    print("iOS icon written to \(args[2])")
+    exit(0)
+}
 guard args.count >= 2 else {
     print("usage: make_icon.swift <output.icns> [preview.png]")
     exit(1)
