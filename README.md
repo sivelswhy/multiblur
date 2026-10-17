@@ -202,7 +202,7 @@ ios/build.sh                 # → ios/build/MultiBlur.ipa (unsigned)
 SIMULATOR=1 ios/build.sh     # → ios/build/MultiBlur-sim.app for the iOS Simulator
 ```
 
-Needs Xcode (for the iOS SDK; the build uses `swiftc` directly, no Xcode project) and the CoreML models in `models/*.mlpackage`. The engine files are shared with `macos/Sources`; the iPhone interface is in `ios/Sources`. The icon is drawn by `swift macos/tools/make_icon.swift --ios ios/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png`.
+Needs Xcode (for the iOS SDK; the build uses `swiftc` directly, no Xcode project) and the CoreML models in `models/*.mlpackage`. The engine files are shared with `macos/Sources`; the iPhone interface is in `ios/Sources`. The icon is drawn by `swift macos/tools/make_icon.swift --ios ios/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png`; the web and Android versions of the same icon come from `python3 scripts/make_icons.py`.
 
 ## Android app
 

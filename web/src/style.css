@@ -134,19 +134,7 @@ svg {
 .app-icon {
   width: 1.75rem;
   height: 1.75rem;
-  border-radius: 0.45rem;
-  background: linear-gradient(160deg, #3d9bff, #0060df);
-  position: relative;
   flex: none;
-}
-
-.app-icon::after {
-  content: "";
-  position: absolute;
-  inset: 0.65rem 0.32rem;
-  border-radius: 0.15rem;
-  background: rgb(255 255 255 / 0.7);
-  filter: blur(1px);
 }
 
 /* The small title fades in once the large one has scrolled away. */
