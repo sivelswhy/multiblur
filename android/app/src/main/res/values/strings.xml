@@ -71,6 +71,7 @@
     <string name="error_no_target">Choose what to mask: plates, faces or both.</string>
     <string name="error_no_replacement">Choose a replacement image in Settings.</string>
     <string name="error_no_video_track">No video track found.</string>
+    <string name="error_unreadable_video">Android can\'t read this video file. Re-saving it with another app usually fixes it.</string>
     <string name="error_no_frames">No frame could be decoded.</string>
     <string name="error_save">Couldn\'t save to the gallery.</string>
     <string name="warning_audio_dropped">The sound isn\'t AAC, so it couldn\'t be kept.</string>

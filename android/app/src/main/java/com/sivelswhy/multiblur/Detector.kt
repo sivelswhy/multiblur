@@ -181,6 +181,8 @@ class Detector private constructor(private val env: OrtEnvironment, private val 
         /** Loads both models from the APK's assets, reporting each one's phase. */
         fun load(context: Context, onPhase: (plates: Boolean, phase: ModelPhase) -> Unit): Detector {
             val env = OrtEnvironment.getEnvironment()
+            // Fully offline: no usage events (the app has no Internet permission anyway).
+            runCatching { env.setTelemetry(false) }
             fun session(name: String, plates: Boolean): OrtSession {
                 onPhase(plates, ModelPhase.LOADING)
                 try {

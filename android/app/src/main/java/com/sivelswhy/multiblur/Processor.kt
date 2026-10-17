@@ -83,6 +83,8 @@ class Processor(private val context: Context, private val detector: Detector) {
         var muxer: MediaMuxer? = null
         try {
             extractor.setDataSource(context, uri, null)
+            // Android's MP4 reader rejects some files outright, e.g. with an untagged cover image track.
+            if (extractor.trackCount == 0) throw IllegalStateException(context.getString(R.string.error_unreadable_video))
             val videoTrack = (0 until extractor.trackCount).firstOrNull { extractor.getTrackFormat(it).mime.startsWith("video/") }
                 ?: throw IllegalStateException(context.getString(R.string.error_no_video_track))
             val inputFormat = extractor.getTrackFormat(videoTrack)

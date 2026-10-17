@@ -72,6 +72,7 @@
     <string name="error_no_target">Choisissez quoi masquer : plaques, visages ou les deux.</string>
     <string name="error_no_replacement">Choisissez une image de remplacement dans les réglages.</string>
     <string name="error_no_video_track">Aucune piste vidéo trouvée.</string>
+    <string name="error_unreadable_video">Android ne sait pas lire ce fichier vidéo. Le réenregistrer avec une autre app règle généralement le problème.</string>
     <string name="error_no_frames">Aucune image n\'a pu être décodée.</string>
     <string name="error_save">Impossible d\'enregistrer dans la galerie.</string>
     <string name="warning_audio_dropped">Le son n\'est pas en AAC : il n\'a pas pu être gardé.</string>

@@ -12,13 +12,31 @@ Four front-ends share the same detectors:
 - `android/`: **MultiBlur for Android**, a native app (Kotlin + Jetpack Compose + ONNX Runtime + MediaCodec).
 - `web/`: the **web app**, at **https://sivelswhy.github.io/multiblur/**. It runs entirely in the browser (ONNX Runtime Web + WebCodecs): photos and videos never leave your device.
 
+## Contents
+
+- [Download](#download)
+- [macOS app](#macos-app-multiblur) · [Build](#build)
+- [Android app](#android-app) · [Build](#build-2)
+- [Web app](#web-app) · [Build](#build-1)
+- [Python CLI](#python-cli) · [Setup](#setup) · [Usage](#usage) · [Tests](#tests)
+- [Models & licenses](#models--licenses)
+- [Limitations](#limitations)
+- [License](#license)
+
 ## Download
 
-Grab the latest **MultiBlur-macOS.zip** from [Releases](https://github.com/sivelswhy/multiblur/releases/latest) (macOS 14+, Apple Silicon or Intel). Unzip it, move MultiBlur.app to Applications and open it once with right-click → Open (or System Settings → Privacy & Security → Open Anyway): the app is ad hoc signed, not notarized.
+| Platform | Get it |
+|---|---|
+| macOS 14+ | **MultiBlur-macOS.zip** from the [latest release](https://github.com/sivelswhy/multiblur/releases/latest) |
+| Android 10+ | **MultiBlur.apk** from the [latest release](https://github.com/sivelswhy/multiblur/releases/latest) ([install notes](#android-app)) |
+| Any browser | **https://sivelswhy.github.io/multiblur/**, nothing to install ([details](#web-app)) |
+| Python | `multiblur.py` from this repository ([setup](#python-cli)) |
+
+**macOS**: grab the latest **MultiBlur-macOS.zip** from [Releases](https://github.com/sivelswhy/multiblur/releases/latest) (macOS 14+, Apple Silicon or Intel). Unzip it, move MultiBlur.app to Applications and open it once with right-click → Open (or System Settings → Privacy & Security → Open Anyway): the app is ad hoc signed, not notarized.
 
 The detection models are included in the app, which never touches the network on its own. **Settings › Advanced › Check for Updates** compares the commit the app was built from with the latest commit on `main`; when they differ, **Update and Relaunch** downloads that commit's release, checks it's a validly signed MultiBlur, replaces the app and relaunches it.
 
-Every push to `main` runs the Python tests, then builds a universal app and publishes it as a new release ([`.github/workflows/release.yml`](.github/workflows/release.yml)).
+Every push to `main` runs the Python tests, then builds a universal app and the Android APK and publishes them as a new release ([`.github/workflows/release.yml`](.github/workflows/release.yml)).
 
 ## Python CLI
 
