@@ -1,7 +1,7 @@
 name: Test, Build & Release
 
-# Every push to main runs the Python tests, then builds a universal MultiBlur.app and
-# publishes it as a GitHub release.
+# Every push to main runs the Python tests, then builds a universal MultiBlur.app and an Android APK, and
+# publishes them as a GitHub release.
 # The CoreML models are versioned in models/*.mlpackage and embedded in the app, which then
 # works fully offline.
 on:
@@ -59,3 +59,27 @@ jobs:
             --title "MultiBlur 1.0.${{ github.run_number }}" \
             --notes-file notes.md \
             --latest
+
+  android:
+    name: Android APK
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build MultiBlur.apk
+        working-directory: android
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk MultiBlur.apk
+          gh release upload "build-${{ github.run_number }}" MultiBlur.apk

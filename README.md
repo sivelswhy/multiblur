@@ -5,10 +5,11 @@ Detects license plates (any country) and faces in images, videos and folders, an
 - **Plates**: YOLOv11 fine-tuned on license plates from many countries.
 - **Faces**: CenterFace from [deface](https://github.com/ORB-HD/deface).
 
-Three front-ends share the same detectors:
+Four front-ends share the same detectors:
 
 - `multiblur.py`: a cross-platform Python CLI.
 - `macos/`: **MultiBlur**, a native macOS app (SwiftUI + CoreML + Vision + AVFoundation) with no Python dependency.
+- `android/`: **MultiBlur for Android**, a native app (Kotlin + Jetpack Compose + ONNX Runtime + MediaCodec).
 - `web/`: the **web app**, at **https://sivelswhy.github.io/multiblur/**. It runs entirely in the browser (ONNX Runtime Web + WebCodecs): photos and videos never leave your device.
 
 ## Download
@@ -161,6 +162,27 @@ npm run build                               # → web/dist
 ```
 
 The ONNX models are versioned in `web/public/models` (45 MB). Every push to `main` that touches `web/` rebuilds the site and publishes it on GitHub Pages ([`.github/workflows/pages.yml`](.github/workflows/pages.yml)).
+
+## Android app
+
+A native app, not a wrapped web page: Kotlin and Jetpack Compose (Material 3, with the phone's own colors), ONNX Runtime for the models, MediaCodec and MediaMuxer for videos. Same detectors, tracker, cut detection and masks as the macOS app, from the same ONNX models as the web app.
+
+- Tap **Add photos or videos** (system photo picker), or share files to MultiBlur from the gallery. Each file is processed in turn with a live preview and the time left, then saved to the gallery in a **MultiBlur** album (`Pictures/MultiBlur`, `Movies/MultiBlur`), with **Open** and **Share** buttons.
+- Settings (top right): what to mask, style (Blur, Mosaic, Box, Image), face shape, detection thresholds and margins, face resolution, small objects, scores, sound, and language (System, English, Français).
+- Videos are decoded, masked upright and re-encoded as H.264; AAC sound is copied as is (other sound codecs are dropped, with a note). Photos keep their format (JPEG, PNG, WebP; HEIC becomes JPEG) without EXIF/GPS metadata.
+- Models run on the CPU (4 threads), so face resolution defaults to 1280 px. The screen stays on while files are processed.
+- Requires Android 10 or later on a 64-bit ARM phone. Not included yet: the editor and voice disguise.
+
+**Install**: download `MultiBlur.apk` from the [latest release](https://github.com/sivelswhy/multiblur/releases/latest), open it on the phone and allow installing from that source. The APK is signed with a debug key, so an update built elsewhere may need the previous version uninstalled first.
+
+### Build
+
+```bash
+cd android
+./gradlew assembleRelease   # → app/build/outputs/apk/release/app-release.apk
+```
+
+Needs JDK 17+ and the Android SDK (`ANDROID_HOME`, or `sdk.dir` in `android/local.properties`). The models come from `web/public/models` (see `scripts/export_onnx.py`). Every push to `main` also builds the APK and attaches it to the release.
 
 ## Models & licenses
 

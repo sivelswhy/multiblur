@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">MultiBlur</string>
+    <string name="tagline">Masks license plates and faces in photos and videos, on your phone. Nothing is uploaded.</string>
+    <string name="settings">Settings</string>
+    <string name="models">Models</string>
+    <string name="model_plates">License plate model</string>
+    <string name="model_faces">Face model</string>
+    <string name="model_waiting">Waiting…</string>
+    <string name="model_loading">Loading…</string>
+    <string name="model_ready">Ready</string>
+    <string name="model_failed">Failed</string>
+    <string name="add_title">Add photos or videos</string>
+    <string name="add_subtitle">Results are saved to your gallery, in a MultiBlur album</string>
+    <string name="privacy">Processed on this phone: your files never leave it.</string>
+    <string name="queue_progress">%1$d of %2$d done</string>
+    <string name="clear_finished">Clear finished</string>
+    <string name="item_waiting_models">Waiting for the models…</string>
+    <string name="item_queued">Waiting…</string>
+    <string name="item_starting">Starting…</string>
+    <string name="item_progress">%1$d %%</string>
+    <string name="item_progress_left">%1$d %% · about %2$s left</string>
+    <string name="item_stopped">Stopped</string>
+    <string name="item_nothing">Nothing to mask</string>
+    <plurals name="item_plates">
+        <item quantity="one">%d plate</item>
+        <item quantity="other">%d plates</item>
+    </plurals>
+    <plurals name="item_faces">
+        <item quantity="one">%d face</item>
+        <item quantity="other">%d faces</item>
+    </plurals>
+    <string name="open">Open</string>
+    <string name="share">Share</string>
+    <string name="stop">Stop</string>
+    <string name="remove">Remove</string>
+    <string name="mask">Mask</string>
+    <string name="plates">License plates</string>
+    <string name="faces">Faces</string>
+    <string name="style">Style</string>
+    <string name="mode_blur">Blur</string>
+    <string name="mode_mosaic">Mosaic</string>
+    <string name="mode_solid">Box</string>
+    <string name="mode_image">Image</string>
+    <string name="block_size">Block size</string>
+    <string name="replacement">Replacement image</string>
+    <string name="choose">Choose…</string>
+    <string name="replacement_note">Transparent areas show a blur, never the original.</string>
+    <string name="face_shape">Face shape</string>
+    <string name="shape_ellipse">Ellipse</string>
+    <string name="shape_box">Box</string>
+    <string name="detection">Detection</string>
+    <string name="plate_confidence">Plate confidence</string>
+    <string name="plate_confidence_note">Lower finds more plates, but also flags ordinary text such as signs.</string>
+    <string name="face_confidence">Face confidence</string>
+    <string name="plate_margin">Plate margin</string>
+    <string name="face_margin">Face margin</string>
+    <string name="face_resolution">Face resolution</string>
+    <string name="resolution_full">Full</string>
+    <string name="small_objects">Small, distant objects</string>
+    <string name="small_off">Off</string>
+    <string name="small_photos">Photos</string>
+    <string name="small_all">Photos &amp; videos</string>
+    <string name="scores">Show detection scores</string>
+    <string name="output">Output</string>
+    <string name="keep_audio">Keep the sound of videos</string>
+    <string name="output_note">Photos are saved without their EXIF and GPS metadata. Videos are saved as MP4.</string>
+    <string name="language">Language</string>
+    <string name="language_system">System</string>
+    <string name="reset">Restore defaults</string>
+    <string name="error_no_target">Choose what to mask: plates, faces or both.</string>
+    <string name="error_no_replacement">Choose a replacement image in Settings.</string>
+    <string name="error_no_video_track">No video track found.</string>
+    <string name="error_no_frames">No frame could be decoded.</string>
+    <string name="error_save">Couldn\'t save to the gallery.</string>
+    <string name="warning_audio_dropped">The sound isn\'t AAC, so it couldn\'t be kept.</string>
+</resources>

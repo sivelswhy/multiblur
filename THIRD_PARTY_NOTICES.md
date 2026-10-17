@@ -33,6 +33,13 @@ It includes or uses the following third-party work, under their own licenses.
   **Mozilla Public License 2.0** (https://mozilla.org/MPL/2.0/); its source is used unmodified, from npm.
 - The plate and face models above, exported to ONNX by `scripts/export_onnx.py` (`web/public/models`).
 
+## Android app
+
+- **ONNX Runtime** for Android (`com.microsoft.onnxruntime:onnxruntime-android`) runs the same ONNX models.
+  License: **MIT** (text below).
+- **AndroidX** and **Jetpack Compose** by Google. License: **Apache License 2.0**, full text in
+  [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
+
 ---
 
 ### CenterFace — MIT License
